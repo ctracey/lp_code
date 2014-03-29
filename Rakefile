@@ -1,6 +1,5 @@
 $LOAD_PATH.push File.expand_path("../lib", __FILE__)
 require 'rspec/core/rake_task'
-require "batch_processor/version"
 
 RSpec::Core::RakeTask.new(:spec)
 

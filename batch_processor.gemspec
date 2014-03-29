@@ -1,5 +1,5 @@
 $LOAD_PATH.push File.expand_path("../lib", __FILE__)
-require "batch_processor/version"
+require 'batch_processor'
 
 Gem::Specification.new do |gem|
   gem.name        = "batch_processor"
@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.test_files    = Dir.glob("{spec}/**/*")
   gem.executables   = Dir.glob("{bin}/*").map{ |file_path| File.basename(file_path) }
   gem.require_paths = ["lib"]
+
+  gem.add_runtime_dependency "clamp"
 end
