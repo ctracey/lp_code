@@ -37,11 +37,11 @@ describe "batch processor" do
       let(:console_output) { `#{command} -h` }
 
       it "describes the destinations parameter" do
-        console_output.include?("DESTINATIONS                  path to xml with destinations content").should be_true
+        console_output.include?("DESTINATIONS_PATH             path to xml with destinations content").should be_true
       end
 
       it "describes the taxonomy parameter" do
-        console_output.include?("TAXONOMY                      path to xml with destination taxonomy").should be_true
+        console_output.include?("TAXONOMY_PATH                 path to xml with destination taxonomy").should be_true
       end
 
       it "describes the version option" do

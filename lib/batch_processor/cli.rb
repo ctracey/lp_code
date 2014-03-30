@@ -9,12 +9,12 @@ module BatchProcessor
       exit(0)
     end
 
-    parameter "DESTINATIONS", "path to xml with destinations content"
-    parameter "TAXONOMY", "path to xml with destination taxonomy"
+    parameter "DESTINATIONS_PATH", "path to xml with destinations content"
+    parameter "TAXONOMY_PATH", "path to xml with destination taxonomy"
 
     def execute
       puts "running batch process"
-      split_destinations_content(destinations)
+      split_destinations_content(destinations_path)
     end
 
     private
