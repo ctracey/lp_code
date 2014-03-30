@@ -9,7 +9,10 @@ describe "BatchProcessor::Destinations" do
 
       it "yields a destination per destination in the destinations xml" do
         count = 0
-        subject.each { count += 1 }
+        subject.each do |destination|
+          destination.instance_of?(BatchProcessor::Destination).should be_true
+          count += 1
+        end
         count.should == 24
       end
     end

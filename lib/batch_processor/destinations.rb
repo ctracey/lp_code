@@ -17,7 +17,7 @@ module BatchProcessor
         raise "Error parsing #{@path}: #{errors}" unless xmldoc.errors.empty?
 
         xmldoc.xpath("/destinations/destination").each do |destination|
-          yield destination
+          yield Destination.new destination
         end
       ensure
         file.close

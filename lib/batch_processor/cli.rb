@@ -21,8 +21,7 @@ module BatchProcessor
       destinations = Destinations.new(path)
       puts "processing destinations:"
       destinations.each do |destination|
-        title = destination.attribute("title").value
-        puts "  #{title}"
+        puts "  #{destination.atlas_id}"
       end
     end
   end
