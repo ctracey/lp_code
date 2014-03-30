@@ -1,6 +1,7 @@
 module BatchProcessor
 
   class Destinations
+    include Enumerable
 
     def initialize(path)
       @path = path
