@@ -10,6 +10,7 @@ module BatchProcessor
     end
 
     parameter "DESTINATIONS", "path to xml with destinations content"
+    parameter "TAXONOMY", "path to xml with destination taxonomy"
 
     def execute
       puts "running batch process"
