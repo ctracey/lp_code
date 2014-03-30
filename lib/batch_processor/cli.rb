@@ -18,7 +18,12 @@ module BatchProcessor
     private
 
     def split_destinations_content(path)
-      puts "processing destinations: #{path}"
+      destinations = Destinations.new(path)
+      puts "processing destinations:"
+      destinations.each do |destination|
+        title = destination.attribute("title").value
+        puts "  #{title}"
+      end
     end
   end
 

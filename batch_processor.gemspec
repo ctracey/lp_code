@@ -20,4 +20,5 @@ Gem::Specification.new do |gem|
   s.add_development_dependency 'byebug'
 
   gem.add_runtime_dependency "clamp"
+  gem.add_runtime_dependency "nokogiri"
 end
