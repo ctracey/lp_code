@@ -20,7 +20,7 @@ describe "BatchProcessor::Destinations" do
     context "empty xml" do
       let(:path) { "spec/fixtures/empty.xml" }
 
-      it "yields no descriptions" do
+      it "yields no destinations" do
         count = 0
         subject.each { count += 1 }
         count.should == 0
