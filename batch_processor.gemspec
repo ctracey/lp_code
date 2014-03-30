@@ -15,5 +15,9 @@ Gem::Specification.new do |gem|
   gem.executables   = Dir.glob("{bin}/*").map{ |file_path| File.basename(file_path) }
   gem.require_paths = ["lib"]
 
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'byebug'
+
   gem.add_runtime_dependency "clamp"
 end
