@@ -6,7 +6,8 @@ module BatchProcessor
     end
 
     def atlas_id
-      @xmldoc.attribute("atlas_id").value
+      @atlas_id = @xmldoc.attribute("atlas_id").value if @atlas_id.nil?
+      @atlas_id
     end
 
     def save(path)
