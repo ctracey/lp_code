@@ -1,4 +1,5 @@
 require 'clamp'
+require 'fileutils'
 
 module BatchProcessor
 
@@ -18,10 +19,22 @@ module BatchProcessor
     private
 
     def split_destinations_content(path)
+      cleanup_destinations("./destinations/")
+
       destinations = Destinations.new(path)
       puts "processing destinations:"
       destinations.each do |destination|
         puts "  #{destination.atlas_id}"
+        destination.save("./destinations/")
+      end
+    end
+
+    def cleanup_destinations(path)
+      begin
+        FileUtils.remove_dir(path, true) if Dir.exists?(path)
+        `mkdir #{path}`
+      rescue
+        raise "failed to clean destinations directory #{path}"
       end
     end
   end
