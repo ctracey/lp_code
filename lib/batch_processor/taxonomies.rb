@@ -9,9 +9,13 @@ module BatchProcessor
     end
 
     def self.parse(path)
-      xml = File.read(path)
-      parser = Nori.new(convert_tags_to: lambda { |tag| tag.snakecase.to_sym })
-      Taxonomies.new(parser.parse(xml))
+      begin
+        xml = File.read(path)
+        parser = Nori.new(convert_tags_to: lambda { |tag| tag.snakecase.to_sym })
+        Taxonomies.new(parser.parse(xml))
+      rescue Exception => e
+        raise "error parsing taxonomy #{path}: #{e.message}"
+      end
     end
 
     def each

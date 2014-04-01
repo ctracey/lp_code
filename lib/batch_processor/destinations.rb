@@ -21,7 +21,7 @@ module BatchProcessor
           yield Destination.new destination
         end
       ensure
-        file.close
+        file.close unless file.nil?
       end
 
     end

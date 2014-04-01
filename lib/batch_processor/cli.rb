@@ -51,13 +51,17 @@ module BatchProcessor
     end
 
     def split_destinations_content(path)
-      cleanup_destinations("./destinations/")
+      begin
+        cleanup_destinations("./destinations/")
 
-      destinations = Destinations.new(path)
-      puts "processing destinations:"
-      destinations.each do |destination|
-        puts "  #{destination.atlas_id}"
-        destination.save("./destinations/")
+        destinations = Destinations.new(path)
+        puts "processing destinations:"
+        destinations.each do |destination|
+          puts "  #{destination.atlas_id}"
+          destination.save("./destinations/")
+        end
+      rescue Exception => e
+        raise "Error splitting destinations #{path}: #{e.message}"
       end
     end
 
