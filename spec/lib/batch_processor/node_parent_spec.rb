@@ -4,23 +4,64 @@ describe "BatchProcessor::NodeParent" do
 
   subject { BatchProcessor::NodeParent.new(data) }
 
-  describe "#nodes" do
-    context "multiple nodes exist" do
-      let(:data) { {:taxonomy_name=>"World", :node=>[{:node_name=>"Africa"}, {:node_name=>"Asia"}]} }
-
-      it "returns an array of nodes" do
-        nodes = subject.nodes
-        nodes.instance_of?(Array)
-        nodes.size.should == 2
-      end
+  describe "#parent" do
+    it "returns nil when created without a parent" do
+      subject.parent.should be_nil
     end
 
-    context "single node exists" do
-      it "returns an array of nodes " do
-        nodes = subject.nodes
-        nodes.instance_of?(Array)
-        nodes.size.should == 1
-      end
+    it "returns the parent when created with one" do
+      parent = double(:parent)
+      nodeParent = BatchProcessor::NodeParent.new(data, parent)
+      nodeParent.parent.should == parent
+    end
+
+  end
+
+  describe "#nodes" do
+    let(:node_data) { double(:node_Data) }
+    let(:data) { {:taxonomy_name=>"World", :node=>node_data} }
+
+    it "returns nodes" do
+      node = double(:nodes)
+      BatchProcessor::Node.stub(:new).with(node_data, nil) { node }
+      subject.nodes.should == [node]
+    end
+  end
+
+  describe "#parse_nodes" do
+    it "returns an empty array if data has no nodes" do
+      data = {:taxonomy_name=>"World"}
+      subject.parse_nodes(data).should == []
+    end
+
+    it "returns an array with single node if data node is a hash of attributes" do
+      node = {}
+      data = {:taxonomy_name=>"World", :node=> node}
+      nodes = subject.parse_nodes(data)
+      nodes.size.should == 1
+      nodes.first.instance_of?(BatchProcessor::Node).should be_true
+    end
+
+    it "returns an array of nodes if data node is a collection of nodes" do
+      node = [{}, {}]
+      data = {:taxonomy_name=>"World", :node=> node}
+      nodes = subject.parse_nodes(data)
+      nodes.size.should == 2
+    end
+
+    it "creates a node with nil parent" do
+      node = {}
+      data = {:taxonomy_name=>"World", :node=> node}
+      nodes = subject.parse_nodes(data)
+      nodes.first.parent.should be_nil
+    end
+
+    it "creates a node with this as the parent if this is a Node" do
+      nodeParent = BatchProcessor::Node.new(data) #Node extends NodeParent
+      node = {}
+      data = {:taxonomy_name=>"World", :node=> node}
+      nodes = nodeParent.parse_nodes(data)
+      nodes.first.parent.should == nodeParent
     end
   end
 

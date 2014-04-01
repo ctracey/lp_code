@@ -2,17 +2,43 @@ describe "BatchProcessor::CLI" do
 
   subject { BatchProcessor::CLI.new("path") }
 
+  let(:destinations_path) { "spec.fixtures/destinations.xml" }
+  let(:taxonomy_path) { "spec/fixtures/taxonomy.xml" }
+
   before do
     subject.stub(:puts)
   end
 
   describe "#execute" do
+    before do
+      subject.stub(:destinations_path){ destinations_path }
+      subject.stub(:split_destinations_content)
 
-    it "starts processing the destinations" do
-      subject.should_receive(:split_destinations_content)
+      subject.stub(:taxonomy_path) { taxonomy_path }
+      subject.stub(:process_destinations)
+    end
+
+    it "splits the desination content" do
+      subject.should_receive(:split_destinations_content).with(destinations_path)
       subject.execute()
     end
 
+    it "parses the taxonomies" do
+      subject.should_receive(:process_destinations).with(taxonomy_path)
+      subject.execute()
+    end
+
+  end
+
+  describe "#process_destinations" do
+    it "processes each destination" do
+      subject.should_receive(:process_destination).exactly(24).times
+      subject.send(:process_destinations, taxonomy_path)
+    end
+  end
+
+  describe "#process_destination" do
+    it "processes the destination"
   end
 
   describe "#split_destinations_content" do

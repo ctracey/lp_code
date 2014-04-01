@@ -8,13 +8,14 @@ module BatchProcessor
       @data = hash[:taxonomies]
     end
 
-    def self.parse(xml)
+    def self.parse(path)
+      xml = File.read(path)
       parser = Nori.new(convert_tags_to: lambda { |tag| tag.snakecase.to_sym })
       Taxonomies.new(parser.parse(xml))
     end
 
     def each
-      # a single taxonomy will not be parsed as an array
+      # a single taxonomy will not be parsed by Nori as an array
       taxonomies = @data[:taxonomy]
 
       if taxonomies.instance_of?(Array)
