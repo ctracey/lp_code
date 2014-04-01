@@ -15,7 +15,9 @@ module BatchProcessor
     def execute
       puts "running batch process"
       split_destinations_content(destinations_path)
-      process_destinations(taxonomy_path)
+      process_destinations(taxonomy_path) do |destination|
+        process_destination(destination)
+      end
     end
 
     private
@@ -26,7 +28,7 @@ module BatchProcessor
       taxonomies.each do |taxonomy|
         taxonomy.nodes.each do |node|
           node.destinations do |destination|
-            process_destination(destination)
+            yield destination
           end
         end
       end

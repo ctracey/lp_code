@@ -24,16 +24,19 @@ describe "BatchProcessor::CLI" do
     end
 
     it "parses the taxonomies" do
-      subject.should_receive(:process_destinations).with(taxonomy_path)
+      destination = double(:destination)
+      subject.should_receive(:process_destinations).with(taxonomy_path).and_yield(destination)
+      subject.should_receive(:process_destination)
       subject.execute()
     end
 
   end
 
   describe "#process_destinations" do
-    it "processes each destination" do
-      subject.should_receive(:process_destination).exactly(24).times
-      subject.send(:process_destinations, taxonomy_path)
+    it "yields each destination" do
+      count = 0
+      subject.send(:process_destinations, taxonomy_path) { count += 1 }
+      count.should == 24
     end
   end
 
