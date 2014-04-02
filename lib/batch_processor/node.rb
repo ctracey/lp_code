@@ -20,5 +20,10 @@ module BatchProcessor
       end
     end
 
+    def to_s
+      pn = parent.node_name unless parent.nil?
+      "#{nodes.size} - #{pn}/#{node_name}(#{atlas_node_id})"
+    end
+
   end
 end

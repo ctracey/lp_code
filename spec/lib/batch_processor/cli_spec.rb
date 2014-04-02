@@ -38,10 +38,47 @@ describe "BatchProcessor::CLI" do
       subject.send(:process_destinations, taxonomy_path) { count += 1 }
       count.should == 24
     end
+
+    it "creates a clean output directory" do
+      subject.should_receive(:cleanup_directory).with(BatchProcessor::CLI::OUTPUT_PATH)
+      subject.send(:process_destinations, taxonomy_path) {}
+    end
+
+    it "copies static resource to output directory" do
+      subject.should_receive(:output_static_resources)
+      subject.send(:process_destinations, taxonomy_path) {}
+    end
   end
 
   describe "#process_destination" do
-    it "processes the destination"
+    let(:node) { double(:node, node_name: "Africa", atlas_node_id: "33064") }
+    let(:destinationHtml) { double(:destinationHtml) }
+
+    before do
+      BatchProcessor::DestinationHtml.stub(:new) { destinationHtml }
+      destinationHtml.stub(:save)
+    end
+
+    it "creates a html file for the destination in the output directory" do
+      destinationHtml = double(:destinationHtml)
+      BatchProcessor::DestinationHtml.stub(:new) { destinationHtml }
+      destinationHtml.should_receive(:save).with(BatchProcessor::CLI::OUTPUT_PATH)
+      destinationHtml.stub(:save)
+
+      subject.send(:process_destination, node)
+    end
+
+    it "uses the node name as the destination name" do
+      BatchProcessor::DestinationHtml.should_receive(:new).with(node.node_name, node.atlas_node_id) { destinationHtml }
+      subject.send(:process_destination, node)
+    end
+
+    it "generates the html from a template" do
+      subject.send(:process_destination, node)
+    end
+
+    it "generates the navigation"
+
   end
 
   describe "#split_destinations_content" do
@@ -69,19 +106,19 @@ describe "BatchProcessor::CLI" do
       destination = double(:destination, atlas_id: 1)
       destination.stub(:save)
       destinations.stub(:each).and_yield(destination)
-      subject.should_receive(:cleanup_destinations)
+      subject.should_receive(:cleanup_directory)
 
       subject.send(:split_destinations_content, path)
     end
 
   end
 
-  describe "#cleanup_destinations" do
+  describe "#cleanup_directory" do
     let(:destinations_path) { "/tmp/destinations/" }
 
     context "no directory exists" do
-      it "creates a destinations directory" do
-        subject.send(:cleanup_destinations, destinations_path)
+      it "creates a directory" do
+        subject.send(:cleanup_directory, destinations_path)
 
         directories = `ls /tmp/`
         directories.include?("destinations").should be_true
@@ -94,7 +131,7 @@ describe "BatchProcessor::CLI" do
         Dir.stub(:exists?) { true }
         FileUtils.should_receive(:remove_dir).with(destinations_path, true)
 
-        subject.send(:cleanup_destinations, destinations_path)
+        subject.send(:cleanup_directory, destinations_path)
 
         directories = `ls /tmp/`
         directories.include?("destinations").should be_true

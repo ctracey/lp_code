@@ -22,4 +22,6 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency "clamp"
   gem.add_runtime_dependency "nokogiri"
   gem.add_runtime_dependency "nori"
+  gem.add_runtime_dependency "erubis"
+
 end
