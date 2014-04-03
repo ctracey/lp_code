@@ -9,7 +9,7 @@ It saves all generated files to ./output directory
 run this command to learn more
 
 ```
-be rake -T
+bundle exec rake -T
 ```
 
 Dependencies
@@ -27,7 +27,7 @@ Running the specs
 Run this command to run all the specs
 
 ```
-be rake spec
+bundle exec rake spec
 ```
 
 Building
@@ -35,7 +35,7 @@ Building
 
 ci task runs the automated tests, builds the gem and installs the gem locally
 ```
-be rake ci
+bundle exec rake ci
 ```
 
 Running the batch processor
