@@ -31,10 +31,7 @@ module BatchProcessor
     def execute
       puts "running batch process"
       split_destinations_content(destinations_path)
-      process_destinations(taxonomy_path) do |destination|
-        puts destination.to_s
-        process_destination(destination)
-      end
+      process_destinations(taxonomy_path)
     end
 
     private

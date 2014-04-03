@@ -27,8 +27,7 @@ describe "BatchProcessor::CLI" do
 
     it "parses the taxonomies" do
       destination = double(:destination)
-      subject.should_receive(:process_destinations).with(taxonomy_path).and_yield(destination)
-      subject.should_receive(:process_destination)
+      subject.should_receive(:process_destinations).with(taxonomy_path)
       subject.execute()
     end
 
@@ -45,11 +44,17 @@ describe "BatchProcessor::CLI" do
     end
 
     it "creates a clean output directory" do
+      taxonomies = double(:taxonomies)
+      taxonomies.stub(:each).and_yield(double(:taxonomy, nodes: []))
+      BatchProcessor::Taxonomies.stub(:parse) { taxonomies }
       subject.should_receive(:cleanup_directory).with(BatchProcessor::CLI::OUTPUT_PATH)
       subject.send(:process_destinations, taxonomy_path)
     end
 
     it "copies static resource to output directory" do
+      taxonomies = double(:taxonomies)
+      taxonomies.stub(:each).and_yield(double(:taxonomy, nodes: []))
+      BatchProcessor::Taxonomies.stub(:parse) { taxonomies }
       subject.should_receive(:output_static_resources)
       subject.send(:process_destinations, taxonomy_path)
     end
