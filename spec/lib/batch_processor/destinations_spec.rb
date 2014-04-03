@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe "BatchProcessor::Destinations" do
 
   subject { BatchProcessor::Destinations.new(path) }

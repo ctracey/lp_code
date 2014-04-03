@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe "BatchProcessor::Node" do
 
   #I would prefer to use newer hash syntax but Nori gem is parsing the xml in this format so I'm testing with this syntax

@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe "BatchProcessor::Taxonomies" do
 
   let(:xml) do

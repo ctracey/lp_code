@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe "BatchProcessor::Destination" do
 
   subject { BatchProcessor::Destination.new xmldoc }

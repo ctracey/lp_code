@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe "BatchProcessor::CLI" do
 
   subject { BatchProcessor::CLI.new("path") }

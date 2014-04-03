@@ -65,11 +65,6 @@ module BatchProcessor
       #   #do processing stuff
       # end
       # Process.detach(job)
-
-
-      # html = Nokogiri::HTML(html_text)
-      # html.xpath("//h1").each { |div|  div.name= "p"; div.set_attribute("class" , "title") }
-      # html.to_html or html.to_s or something like that
     end
 
     def split_destinations_content(path)
