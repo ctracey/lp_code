@@ -35,20 +35,28 @@ describe "BatchProcessor::CLI" do
   end
 
   describe "#process_destinations" do
-    it "yields each destination" do
-      count = 0
-      subject.send(:process_destinations, taxonomy_path) { count += 1 }
-      count.should == 24
+    it "batches and processes destinations" do
+      subject.should_receive(:process_batch).exactly(5).times
+      subject.send(:process_destinations, taxonomy_path)
     end
 
     it "creates a clean output directory" do
       subject.should_receive(:cleanup_directory).with(BatchProcessor::CLI::OUTPUT_PATH)
-      subject.send(:process_destinations, taxonomy_path) {}
+      subject.send(:process_destinations, taxonomy_path)
     end
 
     it "copies static resource to output directory" do
       subject.should_receive(:output_static_resources)
-      subject.send(:process_destinations, taxonomy_path) {}
+      subject.send(:process_destinations, taxonomy_path)
+    end
+  end
+
+  describe "#process_batch" do
+    let(:batch) { (1..5) }
+
+    it "processes each item in the batch" do
+      subject.should_receive(:process_destination).exactly(5).times
+      subject.send(:process_batch, batch)
     end
   end
 

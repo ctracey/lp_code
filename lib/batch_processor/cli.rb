@@ -39,13 +39,25 @@ module BatchProcessor
       output_static_resources
 
       puts "processing destinations:"
+      destinations = []
       taxonomies = Taxonomies.parse(taxonomy_path)
       taxonomies.each do |taxonomy|
         taxonomy.nodes.each do |node|
-          node.destinations do |destination|
-            yield destination
-          end
+          destinations = node.destinations
         end
+      end
+
+      num_destinations = destinations.size
+      puts "found #{num_destinations} destinations"
+
+      Batcher.new(destinations, 5).each do |batch|
+        process_batch(batch)
+      end
+    end
+
+    def process_batch(batch)
+      batch.each do |node|
+        process_destination(node)
       end
     end
 

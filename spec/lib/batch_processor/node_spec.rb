@@ -25,12 +25,8 @@ describe "BatchProcessor::Node" do
     context "a single node" do
       let(:data) { {:node_name=>"Africa"} }
 
-      it "yields this node" do
-        count = 0
-        subject.destinations do |destination|
-          count += 1
-        end
-        count.should == 1
+      it "returns an array with this node" do
+        subject.destinations.size.should == 1
       end
     end
 
@@ -38,11 +34,7 @@ describe "BatchProcessor::Node" do
       let(:data) { {:node_name=>"Africa", :node=> {:node_name=>"South Africa"}} }
 
       it "yields this node and its child nodes" do
-        count = 0
-        subject.destinations do |destination|
-          count += 1
-        end
-        count.should == 2
+        subject.destinations.size.should == 2
       end
     end
 
@@ -50,14 +42,9 @@ describe "BatchProcessor::Node" do
       let(:data) { {:node_name=>"Africa", :node=> {:node_name=>"South Africa", :node=>{:node_name=>"Cape Town"}}} }
 
       it "yields this node and its child nodes" do
-        count = 0
-        subject.destinations do |destination|
-          count += 1
-        end
-        count.should == 3
+        subject.destinations.size.should == 3
       end
     end
 
   end
-
 end

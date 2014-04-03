@@ -12,12 +12,13 @@ module BatchProcessor
     end
 
     def destinations
-      yield self
+      destinations = []
+      destinations << self
       nodes.each do |node|
-        node.destinations do |destination|
-          yield destination
-        end
+        destinations += node.destinations
       end
+
+      destinations
     end
 
     def to_s
