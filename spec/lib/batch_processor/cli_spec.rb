@@ -36,7 +36,11 @@ describe "BatchProcessor::CLI" do
 
   describe "#process_destinations" do
     it "batches and processes destinations" do
-      subject.should_receive(:process_batch).exactly(5).times
+      batcher = double(:batcher)
+      batcher.stub(:each).and_yield("destination1")
+      BatchProcessor::Batcher.stub(:new) { batcher }
+
+      subject.should_receive(:process_batch).exactly(1).times
       subject.send(:process_destinations, taxonomy_path)
     end
 

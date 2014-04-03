@@ -9,7 +9,11 @@ module BatchProcessor
     def each
       @batches = batch if @batches.nil?
       @batches.each do |batch|
-        yield batch
+        pid = fork do
+          $PROGRAM_NAME = "batch_processor"
+          yield batch
+        end
+        Process.detach(pid)
       end
     end
 

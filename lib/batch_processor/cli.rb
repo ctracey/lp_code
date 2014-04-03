@@ -7,14 +7,26 @@ module BatchProcessor
   class CLI < Clamp::Command
 
     OUTPUT_PATH = "./output"
+    MAX_BATCHES_DEFAULT = 20
 
     option ["-v", "--version"], :flag, "show version" do
       puts BatchProcessor::VERSION
       exit(0)
     end
 
-    parameter "DESTINATIONS_PATH", "path to xml with destinations content"
-    parameter "TAXONOMY_PATH", "path to xml with destination taxonomy"
+    parameter "DESTINATIONS_PATH", "Path to xml with destinations content"
+    parameter "TAXONOMY_PATH", "Path to xml with destination taxonomy"
+
+    parameter "[MAX_BATCHES]", "Optional, maximum number of batch processes to spawn. Defaults to #{MAX_BATCHES_DEFAULT}"
+
+    def max_batches=(max_batches)
+      @max_batches = max_batches.to_i
+    end
+
+    def max_batches
+      @max_batches = MAX_BATCHES_DEFAULT if @max_batches.nil? || @max_batches == 0
+      @max_batches
+    end
 
     def execute
       puts "running batch process"
@@ -50,7 +62,7 @@ module BatchProcessor
       num_destinations = destinations.size
       puts "found #{num_destinations} destinations"
 
-      Batcher.new(destinations, 5).each do |batch|
+      Batcher.new(destinations, max_batches).each do |batch|
         process_batch(batch)
       end
     end
@@ -66,17 +78,13 @@ module BatchProcessor
         output_path = "./output"
         template_path = "./templates/destination.eruby"
 
+        puts node.to_s
+
         destinationHtml = DestinationHtml.new(node)
         destinationHtml.save(OUTPUT_PATH)
       rescue Exception=> e
         raise "Error processing destination #{node.node_name}: #{e.message}"
       end
-      #spec process to handle node (parent)
-
-      # job = fork do
-      #   #do processing stuff
-      # end
-      # Process.detach(job)
     end
 
     def split_destinations_content(path)
