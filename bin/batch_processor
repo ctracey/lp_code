@@ -2,5 +2,6 @@
 
 require 'rubygems'
 require 'bundler/setup'
+require 'batch_processor'
 
 BatchProcessor::CLI.run

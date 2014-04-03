@@ -1,5 +1,5 @@
 $LOAD_PATH.push File.expand_path("../lib", __FILE__)
-require 'batch_processor'
+require 'batch_processor/version'
 
 Gem::Specification.new do |gem|
   gem.name        = "batch_processor"
