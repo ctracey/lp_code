@@ -77,8 +77,6 @@ describe "BatchProcessor::CLI" do
       subject.send(:process_destination, node)
     end
 
-    it "generates the navigation"
-
   end
 
   describe "#split_destinations_content" do

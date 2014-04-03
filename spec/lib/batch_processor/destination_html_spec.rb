@@ -1,6 +1,10 @@
+require 'spec_helper'
+require 'Erubis'
+
 describe "BatchProcessor::DestinationHTML" do
 
-  let(:destinationHtml) { BatchProcessor::DestinationHtml.new(double(:node, node_name:"Africa", atlas_node_id: "12345")) }
+  let(:node) { double(:node, node_name:"Africa", atlas_node_id: "12345") }
+  let(:destinationHtml) { BatchProcessor::DestinationHtml.new(node) }
 
   describe "#html" do
     let(:template) { double(:template) }
@@ -9,6 +13,7 @@ describe "BatchProcessor::DestinationHTML" do
     before do
       Erubis::Eruby.stub(:new) { template }
       destinationHtml.stub(:destination_content) { "COOL STUFF" }
+      destinationHtml.stub(:navigation) { navigation }
     end
 
     it "generates html with the destination name" do
@@ -22,8 +27,29 @@ describe "BatchProcessor::DestinationHTML" do
       destinationHtml.html
     end
 
-    it "generates html with the destination navigation"
+    it "generates html with the destination navigation" do
+      destinationHtml.should_receive(:navigation)
+      template.stub(:result)
+      destinationHtml.html
+    end
 
+  end
+
+  describe "#navigation" do
+    let(:child1) { double(:node, node_name: "Kruger National Park", atlas_node_id: "33333", parent: node) }
+    let(:child2) { double(:node, node_name: "Drakensburg", atlas_node_id: "44444", parent: node) }
+    let(:node_parent) { double(:node, node_name: "Africa", atlas_node_id: "11111", parent: nil) }
+    let(:node) { double(:node, node_name: "South Africa", atlas_node_id: "22222", parent: node_parent) }
+
+    it "returns the navigation html" do
+      node.stub(:nodes) { [child1, child2] }
+      destination_link = "<a href='./#{node.atlas_node_id}.html'>#{node.node_name}</a>"
+      parent_link = "<a href='./#{node_parent.atlas_node_id}.html'>#{node_parent.node_name}</a>"
+      child_links = "<li><a href='./#{child1.atlas_node_id}.html'>#{child1.node_name}</a></li><li><a href='./#{child2.atlas_node_id}.html'>#{child2.node_name}</a></li>"
+      navigation_html = "<ul class='navigation' style='padding-left:10px'><li>#{parent_link}<ul class='navigation' style='padding-left:10px'><li>#{destination_link}<ul class='navigation' style='padding-left:10px'>#{child_links}</ul></li></ul></li></ul>"
+
+      destinationHtml.send(:navigation, node).should == navigation_html
+    end
   end
 
   describe "#save" do

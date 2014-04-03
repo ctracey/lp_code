@@ -9,7 +9,7 @@ module BatchProcessor
 
     def html
       template = Erubis::Eruby.new(File.read(TEMPLATE_PATH))
-      template.result(destination_name: @node.node_name, navigation: "NAV", content: destination_content)
+      template.result(destination_name: @node.node_name, navigation: navigation(@node), content: destination_content)
     end
 
     def save(path)
@@ -22,14 +22,20 @@ module BatchProcessor
 
     private
 
-    # def navigation
-    #   # navigation_item(@node)
-    #   "navigation"
-    # end
+    def navigation(node)
+      children = node.nodes.map {|child| navigation_item(child)}
+      destination_link = navigation_item(node, children)
+      parent_navigation = navigation_item(node.parent, [destination_link])
 
-    # def navigation_item(node)
-    #   "<li><a href='./#{node.atlas_node_id}.html'>#{node.node_name}</a></li>"
-    # end
+      "<ul class='navigation' style='padding-left:10px'>#{parent_navigation}</ul>"
+    end
+
+    def navigation_item(node, sub_navigation=nil)
+      sub_nav_html = "<ul class='navigation' style='padding-left:10px'>#{sub_navigation.join}</ul>" unless sub_navigation.nil?
+      link = ""
+      link = "<a href='./#{node.atlas_node_id}.html'>#{node.node_name}</a>" unless node.nil?
+      "<li>#{link}#{sub_nav_html}</li>"
+    end
 
     def destination_content
       xml = File.read("destinations/#{@node.atlas_node_id}.xml")
