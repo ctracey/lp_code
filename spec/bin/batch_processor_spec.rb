@@ -37,11 +37,15 @@ describe "batch processor" do
       let(:console_output) { `#{command} -h` }
 
       it "describes the destinations parameter" do
-        console_output.include?("DESTINATIONS_PATH             path to xml with destinations content").should be_true
+        console_output.include?("DESTINATIONS_PATH             Path to xml with destinations content").should be_true
       end
 
       it "describes the taxonomy parameter" do
-        console_output.include?("TAXONOMY_PATH                 path to xml with destination taxonomy").should be_true
+        console_output.include?("TAXONOMY_PATH                 Path to xml with destination taxonomy").should be_true
+      end
+
+      it "describes the max_batches parameter" do
+        console_output.include?("[MAX_BATCHES]                 Optional, maximum number of batch processes to spawn. Defaults to 20").should be_true
       end
 
       it "describes the version option" do
