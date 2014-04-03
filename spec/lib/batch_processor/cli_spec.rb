@@ -69,7 +69,7 @@ describe "BatchProcessor::CLI" do
     end
 
     it "uses the node name as the destination name" do
-      BatchProcessor::DestinationHtml.should_receive(:new).with(node.node_name, node.atlas_node_id) { destinationHtml }
+      BatchProcessor::DestinationHtml.should_receive(:new).with(node) { destinationHtml }
       subject.send(:process_destination, node)
     end
 

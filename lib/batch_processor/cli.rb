@@ -54,7 +54,7 @@ module BatchProcessor
         output_path = "./output"
         template_path = "./templates/destination.eruby"
 
-        destinationHtml = DestinationHtml.new(node.node_name, node.atlas_node_id)
+        destinationHtml = DestinationHtml.new(node)
         destinationHtml.save(OUTPUT_PATH)
       rescue Exception=> e
         raise "Error processing destination #{node.node_name}: #{e.message}"

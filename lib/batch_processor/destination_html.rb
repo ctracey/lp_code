@@ -3,18 +3,17 @@ module BatchProcessor
 
     TEMPLATE_PATH = "templates/destination.eruby"
 
-    def initialize(destination_name, atlas_node_id)
-      @destination_name = destination_name
-      @atlas_node_id = atlas_node_id
+    def initialize(node)
+      @node = node
     end
 
     def html
       template = Erubis::Eruby.new(File.read(TEMPLATE_PATH))
-      template.result(destination_name: @destination_name, navigation: "navigation", content: destination_content)
+      template.result(destination_name: @node.node_name, navigation: "NAV", content: destination_content)
     end
 
     def save(path)
-      filename = "#{path}/#{@atlas_node_id}.html"
+      filename = "#{path}/#{@node.atlas_node_id}.html"
       File.open(filename, "w") do |file|
         file.write html
       end
@@ -23,8 +22,17 @@ module BatchProcessor
 
     private
 
+    # def navigation
+    #   # navigation_item(@node)
+    #   "navigation"
+    # end
+
+    # def navigation_item(node)
+    #   "<li><a href='./#{node.atlas_node_id}.html'>#{node.node_name}</a></li>"
+    # end
+
     def destination_content
-      xml = File.read("destinations/#{@atlas_node_id}.xml")
+      xml = File.read("destinations/#{@node.atlas_node_id}.xml")
       xml_doc = Nokogiri::XML(xml)
 
       [
