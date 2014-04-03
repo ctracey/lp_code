@@ -4,6 +4,7 @@ LP Batch Processor
 
 This gem is executable.
 It reads in a XML file with destination content and another XML file with destination taxonomy definition.
+It groups destinations into batches and spawns a new process to handle each batch to increase performance. The number of batches in configurable. See Help
 It saves all generated files to ./output directory
 
 run this command to learn more
