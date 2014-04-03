@@ -15,7 +15,7 @@ bundle exec rake -T
 Dependencies
 ------------
 
-This gem is build using Ruby 2.0.0
+This gem is built using Ruby 2.0.0.
 Run this command to install dependencies
 ```
 bundle install
@@ -33,7 +33,7 @@ bundle exec rake spec
 Building
 --------
 
-ci task runs the automated tests, builds the gem and installs the gem locally
+The ci task runs the automated tests, builds the gem and installs the gem locally
 ```
 bundle exec rake ci
 ```
@@ -41,7 +41,7 @@ bundle exec rake ci
 Running the batch processor
 ---------------------------
 
-After you have build and installed the gem you can run the batch processor
+After you have built and installed the gem you can run the batch processor
 
 ### Help
 run this command to get help
