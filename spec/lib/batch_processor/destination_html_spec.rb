@@ -4,7 +4,9 @@ require 'Erubis'
 describe "BatchProcessor::DestinationHTML" do
 
   let(:node) { double(:node, node_name:"Africa", atlas_node_id: "12345") }
-  let(:destinationHtml) { BatchProcessor::DestinationHtml.new(node) }
+  let(:destination) { double(:destination) }
+
+  subject { BatchProcessor::DestinationHtml.new(destination, node) }
 
   describe "#html" do
     let(:template) { double(:template) }
@@ -12,25 +14,25 @@ describe "BatchProcessor::DestinationHTML" do
 
     before do
       Erubis::Eruby.stub(:new) { template }
-      destinationHtml.stub(:destination_content) { "COOL STUFF" }
-      destinationHtml.stub(:navigation) { navigation }
+      subject.stub(:destination_content) { "COOL STUFF" }
+      subject.stub(:navigation) { navigation }
     end
 
     it "generates html with the destination name" do
       template.should_receive(:result) { "html" }
-      destinationHtml.html.should == "html"
+      subject.html.should == "html"
     end
 
     it "generates html with the destination content" do
       template.stub(:destination_content) { "COOL STUFF" }
       template.should_receive(:result).with(destination_name: "Africa", navigation: navigation, content: "COOL STUFF")
-      destinationHtml.html
+      subject.html
     end
 
     it "generates html with the destination navigation" do
-      destinationHtml.should_receive(:navigation)
+      subject.should_receive(:navigation)
       template.stub(:result)
-      destinationHtml.html
+      subject.html
     end
 
   end
@@ -48,16 +50,15 @@ describe "BatchProcessor::DestinationHTML" do
       child_links = "<li><a href='./#{child1.atlas_node_id}.html'>#{child1.node_name}</a></li><li><a href='./#{child2.atlas_node_id}.html'>#{child2.node_name}</a></li>"
       navigation_html = "<ul class='navigation' style='padding-left:10px'><li>#{parent_link}<ul class='navigation' style='padding-left:10px'><li>#{destination_link}<ul class='navigation' style='padding-left:10px'>#{child_links}</ul></li></ul></li></ul>"
 
-      destinationHtml.send(:navigation, node).should == navigation_html
+      subject.send(:navigation, node).should == navigation_html
     end
   end
 
   describe "#save" do
     it "writes a html file to the given directory" do
       output_path = "output/path/"
-      destinationHtml = BatchProcessor::DestinationHtml.new(double(:node, node_name:"Africa", atlas_node_id:"12345"))
+      destinationHtml = BatchProcessor::DestinationHtml.new(destination, double(:node, node_name:"Africa", atlas_node_id:"12345"))
       destinationHtml.stub(:puts)
-      # BatchProcessor::DestinationHtml.stub(:new) { destinationHtml }
       html = double(:html)
       destinationHtml.should_receive(:html) { html }
 
@@ -70,12 +71,10 @@ describe "BatchProcessor::DestinationHTML" do
   end
 
   describe "#destination_content" do
-    it "reads the destination content from destination file with atlas_node_id" do
-      # destinationHtml = BatchProcessor::DestinationHtml.new("Africa", "12345")
-      File.should_receive(:read).with("destinations/12345.xml") { "<destination><introductory><introduction><overview>Cool Stuff</overview></introduction></introductory></destination>" }
+    it "reads the destination content from destination" do
+      destination.should_receive(:xmldoc) { Nokogiri::XML("<introductory><introduction><overview>Cool Stuff</overview></introduction></introductory>") }
 
-      destinationHtml.send(:destination_content).should == "<h1>Overview</h1><span>Cool Stuff</span></br></br></br></br>"
-      # <h1>Overivew</h1><span>Cool Stuff</span></br></br></br></br>"
+      subject.send(:destination_content).should == "<h1>Overview</h1><span>Cool Stuff</span></br></br></br></br>"
     end
   end
 

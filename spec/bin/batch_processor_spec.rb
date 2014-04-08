@@ -44,10 +44,6 @@ describe "batch processor" do
         console_output.include?("TAXONOMY_PATH                 Path to xml with destination taxonomy").should be_true
       end
 
-      it "describes the max_batches parameter" do
-        console_output.include?("[MAX_BATCHES]                 Optional, maximum number of batch processes to spawn. Defaults to 20").should be_true
-      end
-
       it "describes the version option" do
         console_output.include?("-v, --version                 show version").should be_true
       end

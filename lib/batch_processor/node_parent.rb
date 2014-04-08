@@ -16,6 +16,8 @@ module BatchProcessor
       @nodes
     end
 
+    private
+
     def parse_nodes(data)
       nodes = data[:node]
       nodes = [] if nodes.nil?

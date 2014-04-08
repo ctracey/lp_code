@@ -14,63 +14,74 @@ describe "BatchProcessor::CLI" do
   describe "#execute" do
     before do
       subject.stub(:destinations_path){ destinations_path }
-      subject.stub(:split_destinations_content)
 
       subject.stub(:taxonomy_path) { taxonomy_path }
       subject.stub(:process_destinations)
     end
 
-    it "splits the desination content" do
-      subject.should_receive(:split_destinations_content).with(destinations_path)
-      subject.execute()
-    end
-
-    it "parses the taxonomies" do
-      destination = double(:destination)
-      subject.should_receive(:process_destinations).with(taxonomy_path)
+    it "processes the destinations" do
+      subject.should_receive(:process_destinations)
       subject.execute()
     end
 
   end
 
   describe "#process_destinations" do
-    it "batches and processes destinations" do
-      batcher = double(:batcher)
-      batcher.stub(:each).and_yield("destination1")
-      BatchProcessor::Batcher.stub(:new) { batcher }
+    let(:destinations) { double(:destinations) }
+    let(:destination) { double(:destination, atlas_id: 1) }
+    let(:taxonomy) { double(:taxonomy, nodes: []) }
 
-      subject.should_receive(:process_batch).exactly(1).times
-      subject.send(:process_destinations, taxonomy_path)
+    before do
+      destination_taxonomy = {1=> taxonomy}
+      subject.stub(:parse_taxonomy) { destination_taxonomy }
+
+      BatchProcessor::Destinations.stub(:new) { destinations }
+      destinations.stub(:each).and_yield(destination)
+
+      subject.stub(:process_destination)
     end
 
     it "creates a clean output directory" do
-      taxonomies = double(:taxonomies)
-      taxonomies.stub(:each).and_yield(double(:taxonomy, nodes: []))
-      BatchProcessor::Taxonomies.stub(:parse) { taxonomies }
       subject.should_receive(:cleanup_directory).with(BatchProcessor::CLI::OUTPUT_PATH)
-      subject.send(:process_destinations, taxonomy_path)
+      subject.send(:process_destinations)
     end
 
     it "copies static resource to output directory" do
-      taxonomies = double(:taxonomies)
-      taxonomies.stub(:each).and_yield(double(:taxonomy, nodes: []))
-      BatchProcessor::Taxonomies.stub(:parse) { taxonomies }
       subject.should_receive(:output_static_resources)
-      subject.send(:process_destinations, taxonomy_path)
+      subject.send(:process_destinations)
+    end
+
+    it "parses the taxonomies file" do
+      subject.should_receive(:parse_taxonomy)
+      subject.send(:process_destinations)
+    end
+
+    it "processes each destintion" do
+      destinations.should_receive(:each).and_yield(destination)
+      subject.should_receive(:process_destination).with(destination, taxonomy)
+
+      subject.send(:process_destinations)
     end
   end
 
-  describe "#process_batch" do
-    let(:batch) { (1..5) }
+  describe "#parse_taxonomy" do
+    it "returns a hash with an object representing each destination" do
+      subject.stub(:taxonomy_path) { taxonomy_path }
 
-    it "processes each item in the batch" do
-      subject.should_receive(:process_destination).exactly(5).times
-      subject.send(:process_batch, batch)
+      destination1 = double(:destination, atlas_node_id: 1)
+      destination2 = double(:destination, atlas_node_id: 2)
+      node1 = double(:node, nodes: [double(:node, destinations:[destination1, destination2])])
+      taxonomies = double(:taxonomies)
+      taxonomies.stub(:each).and_yield(node1)
+      BatchProcessor::Taxonomies.should_receive(:parse).with(taxonomy_path) { taxonomies }
+
+      subject.send(:parse_taxonomy).should == {1=> destination1, 2=> destination2}
     end
   end
 
   describe "#process_destination" do
     let(:node) { double(:node, node_name: "Africa", atlas_node_id: "33064") }
+    let(:destination) { double(:destination) }
     let(:destinationHtml) { double(:destinationHtml) }
 
     before do
@@ -84,48 +95,12 @@ describe "BatchProcessor::CLI" do
       destinationHtml.should_receive(:save).with(BatchProcessor::CLI::OUTPUT_PATH)
       destinationHtml.stub(:save)
 
-      subject.send(:process_destination, node)
+      subject.send(:process_destination, destination, node)
     end
 
-    it "uses the node name as the destination name" do
-      BatchProcessor::DestinationHtml.should_receive(:new).with(node) { destinationHtml }
-      subject.send(:process_destination, node)
-    end
-
-    it "generates the html from a template" do
-      subject.send(:process_destination, node)
-    end
-
-  end
-
-  describe "#split_destinations_content" do
-    let(:path) { "path/to/desinations.xml" }
-    let(:destinations) { double(:destinations) }
-
-    before do
-      BatchProcessor::Destinations.stub(:new).with(path) { destinations }
-    end
-
-    it "splits the destinations" do
-      destinations.should_receive(:each)
-      subject.send(:split_destinations_content, path)
-    end
-
-    it "writes each destination to a file" do
-      destination = double(:destination, atlas_id: 1)
-      destinations.stub(:each).and_yield(destination)
-      destination.should_receive(:save)
-
-      subject.send(:split_destinations_content, path)
-    end
-
-    it "cleans destinations directory" do
-      destination = double(:destination, atlas_id: 1)
-      destination.stub(:save)
-      destinations.stub(:each).and_yield(destination)
-      subject.should_receive(:cleanup_directory)
-
-      subject.send(:split_destinations_content, path)
+    it "uses the node and the destination to generate the html" do
+      BatchProcessor::DestinationHtml.should_receive(:new).with(destination, node) { destinationHtml }
+      subject.send(:process_destination, destination, node)
     end
 
   end
