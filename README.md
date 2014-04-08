@@ -5,7 +5,6 @@ This gem is executable.
 
 * Reads in a XML file with destination content.
 * Reads in a XML file with destination taxonomy definition.
-* Groups destinations into batches and spawns a new process to handle each batch to increase performance. The number of batches in configurable (see Help).
 * Saves all generated files to ./output directory
 
 
